@@ -1,32 +1,21 @@
 #include "instance.h"
+#include "functions.h"
 #include <iostream>
 #include <fstream>
 
 using std::fstream;
 using std::cout;
 
-int convr(char cchar[], int *depth, int which)
-{
-  int result;
-  (cchar[which + 1] != '\0') ? result = (convr(cchar, depth, which+1) + ((cchar[which] - '0') * (*depth) )) : result = (cchar[which] - '0');
-  (*depth) *=  10;
-  return result;
-}
 
-int convert(char cchar[])
-{
-  int depth = 1;
-  return convr(cchar, &depth, 0);
-}
 
-bool Instance::import_data(char* file_name)
+bool Instance::import_data(char* file_name, int amount)
 {
   int what = 1, index = 0;
   bool plus = false;
   char c, buf[10];
   fstream fp (file_name);
-  vector <int> tmp(7,0);
-  
+  vector <int> tmp(6,0);
+  K = amount;
 
   if(!fp)
     return false;
@@ -40,7 +29,8 @@ bool Instance::import_data(char* file_name)
     {
       fp.seekg(-1, std::ios_base::cur); 
       fp.getline(buf, 10, ' ');
-      K = convert(buf);
+      if(!amount)
+	K = convert(buf);
       plus = true;
     }
 
@@ -53,23 +43,18 @@ bool Instance::import_data(char* file_name)
     }
 
       
-    if(what > 10 && what < 15 && c != ' ')
+    if(what > 10 && what <= K+10 && c != ' ')
     {
       fp.seekg(-1, std::ios_base::cur); 
       fp.getline(buf, 10, ' ');
      
       if(index++ > 1)
-	tmp[index] = convert(buf);
-     cout<<buf<<" "<<index<<"\n";
-
+	tmp[index-3] = convert(buf);
       
-      if(index == 7)
+      if(index == 8)
       {
-	for(int i = 0; i < tmp.size(); i++)
-	  cout<<tmp[i]<<" ";
-	cout<<"\n";
-	
 	orders.push_back(tmp);
+		
 	index = 0;
 	what++;
       }
@@ -96,6 +81,7 @@ void Instance::show()
   cout<<"Instance: \nK = "<< K <<"\nQ = "<< Q << "\n";
   for(int i = 0; i < orders.size(); i++)
   {
+    cout<<i<<":\t";
     for(int j = 0; j < orders[i].size(); j++)
       cout<<orders[i][j]<<"\t";
     cout<<"\n"; 

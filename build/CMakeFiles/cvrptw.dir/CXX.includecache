@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/functions.h
+
+/home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/instance.cpp
+instance.h
+/home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/instance.h
+functions.h
+/home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/functions.h
+iostream
+-
+fstream
+-
+
+/home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/instance.h
+vector
+-
+

@@ -9,8 +9,8 @@ int main(int argc, char **argv) {
     Instance test;
     test.import_data(argv[1]);
     
-    test.show();
+    //test.show();
     
-    cout<<"-=  END   =-\n";
+    cout<<"-= KONIEC  =-\n";
     return 0;
 }

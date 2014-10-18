@@ -25,7 +25,7 @@ bool Instance::import_data(char* file_name)
   bool plus = false;
   char c, buf[10];
   fstream fp (file_name);
-  vector <int> tmp(6,0);
+  vector <int> tmp(7,0);
   
 
   if(!fp)
@@ -36,15 +36,15 @@ bool Instance::import_data(char* file_name)
     
     c = fp.get(); 
       
-    if(what == 5 && c != '\ ')
+    if(what == 5 && c != ' ')
     {
       fp.seekg(-1, std::ios_base::cur); 
-      fp.getline(buf, 10, '\ ');
+      fp.getline(buf, 10, ' ');
       K = convert(buf);
       plus = true;
     }
 
-    if(what == 6 && c != '\ ')
+    if(what == 6 && c != ' ')
     {
       fp.seekg(-1, std::ios_base::cur); 
       fp.getline(buf, 10, '\r');
@@ -53,17 +53,17 @@ bool Instance::import_data(char* file_name)
     }
 
       
-    if(what > 10 && c != '\ ')
+    if(what > 10 && what < 15 && c != ' ')
     {
       fp.seekg(-1, std::ios_base::cur); 
-      fp.getline(buf, 10, '\ ');
+      fp.getline(buf, 10, ' ');
      
-      cout<<buf<<"\n";
-      tmp[index++] = convert(buf);
-     
+      if(index++ > 1)
+	tmp[index] = convert(buf);
+     cout<<buf<<" "<<index<<"\n";
 
       
-      if(index == 6)
+      if(index == 7)
       {
 	for(int i = 0; i < tmp.size(); i++)
 	  cout<<tmp[i]<<" ";
@@ -71,6 +71,7 @@ bool Instance::import_data(char* file_name)
 	
 	orders.push_back(tmp);
 	index = 0;
+	what++;
       }
     }
     

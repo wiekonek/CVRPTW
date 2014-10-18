@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+/home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/functions.cpp
+functions.h
+/home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/functions.h
+
 /home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/functions.h
 
 /home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/instance.cpp
@@ -21,4 +25,12 @@ fstream
 /home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/instance.h
 vector
 -
+
+/home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/main.cpp
+iostream
+-
+instance.h
+/home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/instance.h
+functions.h
+/home/wiekonek/Google Drive/LINUX/KDevelop/CVRPTW/functions.h
 

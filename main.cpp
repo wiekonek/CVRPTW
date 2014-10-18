@@ -1,9 +1,9 @@
 #include <iostream>
 
-using st::cout;
+using std::cout;
 
 int main() {
-  cout<<"Hello world"
+  cout<<"Hello world";
   
   return 0;
 }

@@ -30,6 +30,8 @@ obj/
 [Rr]elease*/
 Ankh.NoLoad
 
+*.txt
+
 #Tooling
 _ReSharper*/
 *.resharper

@@ -1,5 +1,5 @@
 project(cvrptw)
 
-add_executable(cvrptw main.cpp)
+add_executable(cvrptw instance.cpp main.cpp)
 
 install(TARGETS cvrptw RUNTIME DESTINATION bin)

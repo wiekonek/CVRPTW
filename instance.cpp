@@ -70,8 +70,6 @@ bool Instance::import_data(char* file_name, int amount)
   }
   
 
-
-
   fp.close();
   return true;
 }

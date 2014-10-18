@@ -1,1 +1,0 @@
-/usr/bin/c++   -g    CMakeFiles/cvrptw.dir/functions.o CMakeFiles/cvrptw.dir/instance.o CMakeFiles/cvrptw.dir/main.o  -o cvrptw -rdynamic 

@@ -6,7 +6,11 @@ using std::cout;
 using std::cin;
 
 int main(int argc, char **argv) {
-    cout<<"-= CVRPTW =-\n";
+    cout<<"-= CVRPTW =-";
+    
+    if(argc < 3)
+      return 0;
+
     Instance test;
     test.import_data(argv[2], convert(argv[1]));
     

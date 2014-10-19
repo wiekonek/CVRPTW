@@ -19,15 +19,15 @@ bool Instance::import_data(char* file_name, int amount)
 
   if(!fp.good())
     return false;
-  
+
   while(fp.good())
   {
-    
-    c = fp.get(); 
-      
+
+    c = fp.get();
+
     if(what == 5 && c != ' ')
     {
-      fp.seekg(-1, std::ios_base::cur); 
+      fp.seekg(-1, std::ios_base::cur);
       fp.getline(buf, 10, ' ');
       if(!amount)
 	K = convert(buf);
@@ -36,39 +36,39 @@ bool Instance::import_data(char* file_name, int amount)
 
     if(what == 6 && c != ' ')
     {
-      fp.seekg(-1, std::ios_base::cur); 
+      fp.seekg(-1, std::ios_base::cur);
       fp.getline(buf, 10, '\r');
       Q = convert(buf);
       plus = true;
     }
 
-      
+
     if(what > 10 && what <= K+10 && c != ' ')
     {
-      fp.seekg(-1, std::ios_base::cur); 
+      fp.seekg(-1, std::ios_base::cur);
       fp.getline(buf, 10, ' ');
-     
+
       if(index++ > 1)
 	tmp[index-3] = convert(buf);
-      
+
       if(index == 8)
       {
 	orders.push_back(tmp);
-		
+
 	index = 0;
 	what++;
       }
     }
-    
 
-    
+
+
     if(c == '\n' || plus)
     {
       what++;
       plus = false;
     }
   }
-  
+
 
   fp.close();
   return true;
@@ -82,7 +82,7 @@ void Instance::show()
     cout<<i<<":\t";
     for(int j = 0; j < orders[i].size(); j++)
       cout<<orders[i][j]<<"\t";
-    cout<<"\n"; 
+    cout<<"\n";
   }
 }
 

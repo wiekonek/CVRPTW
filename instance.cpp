@@ -17,7 +17,7 @@ bool Instance::import_data(char* file_name, int amount)
   vector <int> tmp(6,0);
   K = amount;
 
-  if(!fp)
+  if(!fp.good())
     return false;
   
   while(fp.good())

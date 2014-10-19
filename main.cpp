@@ -1,20 +1,25 @@
 #include <iostream>
 #include "instance.h"
-#include "functions.h"
+#include "text.h"
 
 using std::cout;
 using std::cin;
 
 int main(int argc, char **argv) {
-    cout<<"-= CVRPTW =-";
+  
+    cout<<"-= CVRPTW =-\n";
 
     if(argc < 3)
       return 0;
-    Instance test;
-    test.import_data(argv[2], convert(argv[1]));
+    
+    Instance *test = new Instance();
+    Text *file_name = new Text(argv[1]);
 
-    test.show();
-
+    test->import_data(argv[2], file_name->to_int());
+    test->show();
+    
+    delete test;
+    delete file_name;
     cout<<"-= KONIEC  =-\n";
     return 0;
 }

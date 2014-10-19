@@ -1,5 +1,5 @@
 #include "instance.h"
-#include "functions.h"
+#include "text.h"
 #include <iostream>
 #include <fstream>
 
@@ -12,10 +12,13 @@ bool Instance::import_data(char* file_name, int amount)
 {
   int what = 1, index = 0;
   bool plus = false;
-  char c, buf[10];
+  char c;
   fstream fp (file_name);
   vector <int> tmp(6,0);
   K = amount;
+ 
+  
+  Text *buff = new Text();
 
   if(!fp.good())
     return false;
@@ -28,17 +31,17 @@ bool Instance::import_data(char* file_name, int amount)
     if(what == 5 && c != ' ')
     {
       fp.seekg(-1, std::ios_base::cur);
-      fp.getline(buf, 10, ' ');
+      fp.getline(buff->get_ptr(), 10, ' ');
       if(!amount)
-	K = convert(buf);
+	K = buff->to_int();
       plus = true;
     }
 
     if(what == 6 && c != ' ')
     {
       fp.seekg(-1, std::ios_base::cur);
-      fp.getline(buf, 10, '\r');
-      Q = convert(buf);
+      fp.getline(buff->get_ptr(), 10, '\r');
+      Q = buff->to_int();
       plus = true;
     }
 
@@ -46,10 +49,10 @@ bool Instance::import_data(char* file_name, int amount)
     if(what > 10 && what <= K+10 && c != ' ')
     {
       fp.seekg(-1, std::ios_base::cur);
-      fp.getline(buf, 10, ' ');
+      fp.getline(buff->get_ptr(), 10, ' ');
 
       if(index++ > 1)
-	tmp[index-3] = convert(buf);
+	tmp[index-3] = buff->to_int();
 
       if(index == 8)
       {
@@ -62,14 +65,14 @@ bool Instance::import_data(char* file_name, int amount)
 
 
 
-    if(c == '\n' || plus)
+    if(c == '\n'|| plus)
     {
       what++;
       plus = false;
     }
   }
 
-
+  delete buff;
   fp.close();
   return true;
 }

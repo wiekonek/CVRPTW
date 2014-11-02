@@ -14,12 +14,8 @@ int main(int argc, char **argv) {
     
     Text *amount = new Text(argv[1]);
     Instance *test = new Instance(argv[2], amount->to_int());
-    
 
-    test->show();
-    
-    int klient = 5;
-     cout<< "Najbliżej klienta nr " << klient << " jest klient nr " << test->nearest(klient) << "\n";
+    cout<< "Trasa 1: "<<test->itinerary(0)<<"\n";
     
     delete test;
     delete amount;

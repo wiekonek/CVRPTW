@@ -19,10 +19,13 @@ Instance::Instance(char* file_name, int amount)
   vector <int> tmp(7,0);
   Order *order;
   served.resize(amount);
+//   ready.resize(amount);
   
   for(int i = 0; i < served.size() - 1; i++)
+  {
     served[i] = false;
-  
+//     ready[i] = false;
+  }
   Text *buff = new Text();
 
 
@@ -85,7 +88,7 @@ Instance::Instance(char* file_name, int amount)
 
 Instance::~Instance()
 {
-  for(int i = 0; i < orders.size()-1; i++)
+  for(int i = orders.size()-1; i >= 0; i--)
     delete orders[i];
 }
 
@@ -97,16 +100,25 @@ void Instance::show()
     cout<<orders[i]->get_customer_number()<<"\t"<<orders[i]->get_x()<<"\t"<<orders[i]->get_y()<<"\t"<<orders[i]->get_demand()<<"\t"<<orders[i]->get_ready_time()<<"\t"<<orders[i]->get_due_date()<<"\t"<<orders[i]->get_service_duration()<<"\n";
 }
 
+// void Instance::update_ready()
+// {
+//   for(int i = 1; i < orders.size(); i++)
+//     if(time > orders[i]->get_ready_time() && time < orders[i]->get_due_date())
+//       ready[i] = true;
+// }
+
+
 int Instance::nearest(int customer_number)
 {
   //x = orders[customer_number][1]; y = orders[customer_number][2];
-  int next_customer = 1;
+  int next_customer = -1;
   float dist = pow(10.0, 5.0);
-  
-  for(int i = 1; i <= orders.size()-1; i++)
-    if(i != customer_number && orders[customer_number]->distance_to(i, orders) < dist)
+
+  for(int i = 1; i < orders.size(); i++)
+    if(!served[i]  && i != customer_number  && orders[customer_number]->distance_to(i, orders) < dist)
     {
       dist = orders[customer_number]->distance_to(i, orders);
+      if(time + dist >= orders[i]->get_ready_time() && time + dist + orders[i]->get_service_duration() <= orders[i]->get_due_date())
       next_customer = i;
     }
   
@@ -117,7 +129,7 @@ int Instance::smallest_order()
 {
   int smallest = pow(10, 5);
   
-  for(int i = 0; i <= served.size(); i++){
+  for(int i = 0; i < orders.size(); i++){
     if(!served[i] && orders[i]->get_demand() < smallest)
       smallest = orders[i]->get_demand();
   }
@@ -128,15 +140,28 @@ int Instance::smallest_order()
 
 float Instance::itinerary(int start_cust)
 {
+  time = 0;
   float distance = 0;
-  int vehicle_capacity = Q, current_cust, next_cust = start_cust; 
- 
+  int vehicle_capacity = 1000, current_cust, next_cust = start_cust; 
+
   while(vehicle_capacity >= smallest_order())
   {
+//     update_ready();
     current_cust = next_cust;
-    distance += orders[current_cust]->distance_to(nearest(current_cust), orders);
     served[current_cust] = true;
     next_cust = nearest(current_cust);
+    if(current_cust == next_cust || next_cust == -1)
+    {
+      cout<<" time: "<< time <<"\n";
+      time++;
+    }
+    else
+    {
+      cout<<"c1: "<<current_cust<<" c2: "<<next_cust<<" capa: "<<vehicle_capacity<<" time: "<< time <<"\n";
+      time += orders[current_cust]->distance_to(next_cust, orders) + orders[next_cust]->get_service_duration();
+      distance += orders[current_cust]->distance_to(next_cust, orders);
+      vehicle_capacity -= orders[next_cust]->get_demand();
+    }
   }
   
   

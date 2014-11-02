@@ -42,8 +42,7 @@ public:
   Instance(char* file_name, int K); 			//import data from file
   ~Instance();						//delete Instance
   int nearest(int start_cust); 				//return nearest customer number
-  float  itinerary(int customer_number);		//found one itinerary, vehicle return to base when loading isn't enough to deliver anymore order, start from customer_number
-/*  void update_ready();	*/			//update ready list
+  float  itinerary();					//found one itinerary, vehicle return to base when loading isn't enough to deliver anymore order
   void show(); 						//show data in object
 };
 

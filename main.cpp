@@ -12,14 +12,17 @@ int main(int argc, char **argv) {
     if(argc < 3)
       return 0;
     
-    Instance *test = new Instance();
-    Text *file_name = new Text(argv[1]);
+    Text *amount = new Text(argv[1]);
+    Instance *test = new Instance(argv[2], amount->to_int());
+    
 
-    test->import_data(argv[2], file_name->to_int());
     test->show();
     
+    int klient = 5;
+     cout<< "Najbliżej klienta nr " << klient << " jest klient nr " << test->nearest(klient) << "\n";
+    
     delete test;
-    delete file_name;
+    delete amount;
     cout<<"-= KONIEC  =-\n";
     return 0;
 }

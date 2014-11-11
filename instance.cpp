@@ -83,7 +83,7 @@ int Instance::nearest(int customer_number)
   float dist = pow(10.0, 5.0);
 
   for(int i = 1; i < orders.size(); i++)
-    if(!served[i]  && i != customer_number  && orders[customer_number]->distance_to(i, orders) < dist)
+    if(!served[i]  && i != customer_number  && orders[customer_number]->distance_to(i, orders) < dist && time < orders[customer_number]->get_due_date())
     {
       dist = orders[customer_number]->distance_to(i, orders);
       next_customer = i;
@@ -126,12 +126,16 @@ float Instance::itinerary()
       time += orders[current_cust]->distance_to(next_cust, orders) + orders[next_cust]->get_service_duration();
       distance += orders[current_cust]->distance_to(next_cust, orders);
       vehicle_capacity -= orders[next_cust]->get_demand();
+    
+    if(!next_cust)
+      return distance;
 
   }
   
   
   return distance;
 }
+
 
 
 //           ORDER

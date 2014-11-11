@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     Instance *test = new Instance(argv[2], amount->to_int());
 
      test->show();
-//     cout<< "Trasa 1: "<<test->itinerary()<<"\n";
+     cout<< "Trasa 1: "<<test->itinerary()<<"\n";
     
     delete test;
     delete amount;

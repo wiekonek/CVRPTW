@@ -6,7 +6,7 @@
 
 
 using std::cout;
-
+using std::vector;
 
 // Instance
 
@@ -75,7 +75,21 @@ void Instance::show()
   cout<<"CUS NUM\tX\tY\tDEMAND\tREADY T\tDUE DATE\tSER DURAT\n";
   for(int i = 0; i < orders.size(); i++)
     cout<<orders[i]->get_customer_number()<<"\t"<<orders[i]->get_x()<<"\t"<<orders[i]->get_y()<<"\t"<<orders[i]->get_demand()<<"\t"<<orders[i]->get_ready_time()<<"\t"<<orders[i]->get_due_date()<<"\t"<<orders[i]->get_service_duration()<<"\n";
+  
+  for(int i = 0; i < served.size(); i++)
+    cout<< i << " : " << served[i] << "\n";
+  
+  
 }
+
+bool Instance::all_served()
+{
+  for(int i = 1; i < served.size(); i++)
+    if(!served[i])
+      return false;
+    return true;
+}
+
 
 int Instance::nearest(int customer_number)
 {
@@ -105,19 +119,22 @@ int Instance::smallest_order()
 }
 
 
-float Instance::itinerary()
+float Instance::itinerary(vector<int> &route)
 {
   time = 0;
   float distance = 0;
   int vehicle_capacity = Q, current_cust, next_cust = 0; 
-
+  served[0] = 0;
+  route.resize(0);
+  route.push_back(0);
   while(vehicle_capacity >= smallest_order())
   {
 
     current_cust = next_cust;
     next_cust = nearest(current_cust);
-    //served[next_cust] = true;
-    cout << "c1: " << current_cust << " c2: " << next_cust << " capa: " << vehicle_capacity << " time: " << time << "\n";
+//     served[next_cust] = true;
+//     cout << "c1: " << current_cust << " c2: " << next_cust << " capa: " << vehicle_capacity << " time: " << time << "\n";
+    route.push_back(next_cust);
     
     if(time < orders[next_cust]->get_ready_time())
       time = orders[next_cust]->get_ready_time();
@@ -131,10 +148,28 @@ float Instance::itinerary()
       return distance;
 
   }
-  
-  
+   
   return distance;
 }
+
+
+void Instance::solve()
+{
+  float distance = 0;
+  vector<int> route;
+  
+  while(!all_served())
+  {
+    distance += itinerary(route);
+
+    for(int i = 0; i < route.size(); i++)
+      cout<<route[i]<<" ";
+    cout<<"\n";
+  }
+  
+  cout<<"Distnace: "<<distance<<"\n";
+}
+
 
 
 

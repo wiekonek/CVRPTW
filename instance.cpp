@@ -1,10 +1,10 @@
 #include "instance.h"
-#include "text.h"
+
 #include <math.h>
 #include <iostream>
 #include <fstream>
 
-using std::fstream;
+
 using std::cout;
 
 
@@ -12,77 +12,54 @@ using std::cout;
 
 Instance::Instance(char* file_name, int amount)
 {
-  int what = 1, index = 0;
-  bool plus = false;
-  char c;
-  fstream fp (file_name);
+  std::ifstream fp;
+  std::string text;
   vector <int> tmp(7,0);
   Order *order;
-  served.resize(amount);
-//   ready.resize(amount);
+  
+  fp.open(file_name);
+
+
+  for(int i = 0; i < 4; i++)
+    fp >> text;
+
+  fp >> K >> Q;
+
+
+  for(int i = 0; i < 12; i++)
+    fp >> text;
+  
+  if(!amount)
+  {
+    while(fp.good())
+    {
+    for(int j = 0; j < 7; j++)
+      fp >> tmp[j];
+    order = new Order(tmp);
+    orders.push_back(order);
+    }
+    orders.pop_back();
+  }
+  else
+  {
+   for(int i = 0; i <= amount && fp.good(); i++)
+    {
+    for(int j = 0; j < 7; j++)
+      fp >> tmp[j];
+    order = new Order(tmp);
+    orders.push_back(order);
+    }
+  }
+  
+  served.resize(orders.size());
+//   ready.resize(orders.size());
   
   for(int i = 0; i < served.size() - 1; i++)
   {
     served[i] = false;
 //     ready[i] = false;
   }
-  Text *buff = new Text();
-
-
-
-  while(fp.good())
-  {
-
-    c = fp.get();
-
-    if(what == 5 && c != ' ')
-    {
-      fp.seekg(-1, std::ios_base::cur);
-      fp.getline(buff->get_ptr(), 10, ' ');
-      K = buff->to_int();
-      plus = true;
-    }
-
-    if(what == 6 && c != ' ')
-    {
-      fp.seekg(-1, std::ios_base::cur);
-      fp.getline(buff->get_ptr(), 10, '\r');
-      Q = buff->to_int();
-      plus = true;
-    }
-
-
-    if(what > 10 && what <= amount+10 && c != ' ')
-    {
-      fp.seekg(-1, std::ios_base::cur);
-      fp.getline(buff->get_ptr(), 10, ' ');
-      
-      if(index++ > 0)
-	  tmp[index - 2] = buff->to_int();
- 
-      if(index == 8)
-      {
-// 	cout<<tmp.size()<<": ";
-// 	for(int i = 0; i <= tmp.size() - 1; i++)
-// 	  cout<<tmp[i]<<"  ";
-// 	cout<<"\n";
-	
-	order = new Order(tmp);
-	orders.push_back(order);
-	
-	index = 0;
-	plus = true;
-      }
-    }
-
-    if(c == '\n'|| plus)
-    {
-      what++;
-      plus = false;
-    }
-  }
-
-  delete buff;
+  
   fp.close();
 }
 

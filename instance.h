@@ -2,6 +2,7 @@
 #define INSTANCE_H
 
 #include <vector>
+#include <string>
 
 
 
@@ -10,10 +11,10 @@ using std::vector;
 class Instance
 {
 private:
+  std::string file_name;
   int K, Q;
   float time;
   vector<bool> served;
-
   
   class Order
   {
@@ -31,7 +32,6 @@ private:
     int get_service_duration();
     
     float distance_to(int, vector<Order*>);  		//return distance to next_customer
-    
   };
   
   vector<Order*> orders; 				//list of orders

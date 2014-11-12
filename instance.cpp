@@ -3,6 +3,7 @@
 #include <math.h>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 
 using std::cout;
@@ -16,7 +17,7 @@ Instance::Instance(char* file_name, int amount)
   std::string text;
   vector <int> tmp(7,0);
   Order *order;
-  
+  this->file_name = file_name;
   fp.open(file_name);
 
 
@@ -155,19 +156,31 @@ float Instance::itinerary(vector<int> &route)
 
 void Instance::solve()
 {
+  int control = 0;
   float distance = 0;
   vector<int> route;
-  
+  std::ofstream output;
+
+  output.open(("OUTPUT_"+file_name).c_str());
+  output << "                                                  \n";
   while(!all_served())
   {
     distance += itinerary(route);
 
     for(int i = 0; i < route.size(); i++)
-      cout<<route[i]<<" ";
-    cout<<"\n";
+      output << route[i] << " ";
+    output << "\n";
+    if(control++ >= served.size())
+      return;
   }
   
-  cout<<"Distnace: "<<distance<<"\n";
+
+
+  output.seekp(0);
+  output << std::setiosflags(std::ios::fixed) << std::setprecision(5) << distance;
+  
+  output.close();
+  
 }
 
 

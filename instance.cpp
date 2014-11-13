@@ -113,7 +113,7 @@ int Instance::nearest(int customer_number, int vehicle_capacity)
   float dist = pow(10.0, 5.0);
 
   for(int i = 1; i < orders.size(); i++)
-    if(!served[i]  && i != customer_number  && orders[customer_number]->distance_to(i, orders) < dist && time < orders[customer_number]->get_due_date() && vehicle_capacity >= orders[customer_number]->get_demand())
+    if(!served[i]  && i != customer_number  && orders[customer_number]->distance_to(i, orders) < dist && time < orders[i]->get_due_date() && vehicle_capacity >= orders[i]->get_demand())
     {
       dist = orders[customer_number]->distance_to(i, orders);
       next_customer = i;
@@ -171,13 +171,14 @@ float Instance::itinerary(vector<int> &route)
     if(!next_cust)
       return time-start;
   }
+  
 }
 
 
 void Instance::solve()
 {
   int control = 0;
-  float cost = 0, check = 0;
+  double cost = 0, check = 0;
   int iti_num = 0;
   vector<int> route;
   std::ofstream output;

@@ -37,7 +37,8 @@ private:
   vector<Order*> orders; 				//list of orders
   
   int smallest_order();					//return size of the smallest remainning order	
-  int nearest(int start_cust); 				//return nearest customer number
+//  int nearest(int start_cust); 			//return nearest customer number
+  int nearest(int start_cust, int vehicle_capacity);	//return nearest customer number additionaly check demand size < vehicle_capacity
   bool all_served();					//return true if all customers are served
   float  itinerary(vector<int> &route);			//found one itinerary, vehicle return to base when loading isn't enough to deliver anymore order
   

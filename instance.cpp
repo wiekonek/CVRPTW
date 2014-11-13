@@ -92,13 +92,28 @@ bool Instance::all_served()
 }
 
 
-int Instance::nearest(int customer_number)
+// int Instance::nearest(int customer_number)
+// {
+//   int next_customer = 0;
+//   float dist = pow(10.0, 5.0);
+// 
+//   for(int i = 1; i < orders.size(); i++)
+//     if(!served[i]  && i != customer_number  && orders[customer_number]->distance_to(i, orders) < dist && time < orders[customer_number]->get_due_date())
+//     {
+//       dist = orders[customer_number]->distance_to(i, orders);
+//       next_customer = i;
+//     }
+//   
+//   return next_customer;
+// }
+
+int Instance::nearest(int customer_number, int vehicle_capacity)
 {
   int next_customer = 0;
   float dist = pow(10.0, 5.0);
 
   for(int i = 1; i < orders.size(); i++)
-    if(!served[i]  && i != customer_number  && orders[customer_number]->distance_to(i, orders) < dist && time < orders[customer_number]->get_due_date())
+    if(!served[i]  && i != customer_number  && orders[customer_number]->distance_to(i, orders) < dist && time < orders[customer_number]->get_due_date() && vehicle_capacity >= orders[customer_number]->get_demand())
     {
       dist = orders[customer_number]->distance_to(i, orders);
       next_customer = i;
@@ -123,61 +138,75 @@ int Instance::smallest_order()
 float Instance::itinerary(vector<int> &route)
 {
   time = 0;
-  float distance = 0;
+  float start = 0;
   int vehicle_capacity = Q, current_cust, next_cust = 0; 
+  vector<bool> tmp = served;
   served[0] = 0;
   route.resize(0);
   route.push_back(0);
+
   while(vehicle_capacity >= smallest_order())
   {
-
     current_cust = next_cust;
-    next_cust = nearest(current_cust);
-//     served[next_cust] = true;
-//     cout << "c1: " << current_cust << " c2: " << next_cust << " capa: " << vehicle_capacity << " time: " << time << "\n";
+    if(time + orders[nearest(current_cust, vehicle_capacity)]->distance_to(0, orders) + orders[current_cust]->get_service_duration() + orders[next_cust]->get_service_duration()<= orders[0]->get_due_date())
+      next_cust = nearest(current_cust, vehicle_capacity);
+    else if(time + orders[current_cust]->distance_to(0, orders) + orders[current_cust]->get_service_duration() <= orders[0]->get_due_date())
+      next_cust = 0;
+    else
+      return -1;
     route.push_back(next_cust);
+    served[next_cust] = true; 
     
+    time += orders[current_cust]->distance_to(next_cust, orders);
     if(time < orders[next_cust]->get_ready_time())
+    {
       time = orders[next_cust]->get_ready_time();
+//       start = time - orders[current_cust]->distance_to(next_cust, orders);
+    }
+    time += orders[next_cust]->get_service_duration();
 
-      served[next_cust] = true;
-      time += orders[current_cust]->distance_to(next_cust, orders) + orders[next_cust]->get_service_duration();
-      distance += orders[current_cust]->distance_to(next_cust, orders);
-      vehicle_capacity -= orders[next_cust]->get_demand();
     
+    vehicle_capacity -= orders[next_cust]->get_demand();
+    cout << "c1: " << current_cust << " c2: " << next_cust << " capa: " << vehicle_capacity << " time: " << time << "\n";
     if(!next_cust)
-      return distance;
-
+      return time-start;
   }
-   
-  return distance;
 }
 
 
 void Instance::solve()
 {
   int control = 0;
-  float distance = 0;
+  float cost = 0, check = 0;
+  int iti_num = 0;
   vector<int> route;
   std::ofstream output;
-
   output.open(("OUTPUT_"+file_name).c_str());
+  
   output << "                                                  \n";
+  
   while(!all_served())
   {
-    distance += itinerary(route);
-
+    check = itinerary(route);
+    cout<<"\n";
+    if(check == -1)
+    {
+      output.seekp(0);
+      output << -1;
+      return;
+    }
+      
+    cost += check;
+    iti_num++;
     for(int i = 0; i < route.size(); i++)
       output << route[i] << " ";
     output << "\n";
     if(control++ >= served.size())
       return;
   }
-  
-
 
   output.seekp(0);
-  output << std::setiosflags(std::ios::fixed) << std::setprecision(5) << distance;
+  output << iti_num << " " << std::setiosflags(std::ios::fixed) << std::setprecision(5) << cost;
   
   output.close();
   

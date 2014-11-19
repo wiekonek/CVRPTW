@@ -6,7 +6,7 @@ using std::cout;
 using std::cin;
 
 int main(int argc, char **argv) {
-    cout<<"-= CVRPTW =-\n\n";
+    cout<<"-=  CVRPTW  =-\n\n";
 
     if(argc < 3)
       return 0;
@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
     Instance *test = new Instance(argv[2], amount->to_int());
     
     vector<int> temp;
-     
+    
     test->solve();
      
     delete test;

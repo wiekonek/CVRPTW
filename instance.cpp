@@ -172,7 +172,6 @@ void Instance::solve()
   while(!all_served())
   {
     check = itinerary(route);
-    cout<<"\n";
     if(check == -1)
     {
       output.seekp(0);

@@ -7,7 +7,7 @@
 #include "instance.h"
 #include "text.h"
 
-#define MAX_TIME 180000
+#define MAX_TIME 180000 //3 min
 
 using std::cout;
 using std::cin;
@@ -19,7 +19,7 @@ int main ( int argc, char **argv ) {
     Instance *test = new Instance ( argv[2], amount->to_int() );
     vector<int> temp;
 
-    cout<<"-=  CVRPTW  =-\n\n";
+    cout<<"-=  CVRPTW  =-\n";
 
     if ( argc < 3 ) {
         \
@@ -39,13 +39,12 @@ int main ( int argc, char **argv ) {
         if ( !status )
             cout<<"Success!\n";
         else {
-            cout<<"Something goes wrong! :c\n";
+            cout<<"Time's up! :c\n";
             kill ( pID, 9 );
             }
-        cout<<"Cleaning...\n";
         delete test;
         delete amount;
-        cout<<"\n-= END =-\n";
+        cout<<"-= END =-\n";
         }
 
     return 0;

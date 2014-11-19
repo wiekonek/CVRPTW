@@ -92,20 +92,6 @@ bool Instance::all_served()
 }
 
 
-// int Instance::nearest(int customer_number)
-// {
-//   int next_customer = 0;
-//   float dist = pow(10.0, 5.0);
-// 
-//   for(int i = 1; i < orders.size(); i++)
-//     if(!served[i]  && i != customer_number  && orders[customer_number]->distance_to(i, orders) < dist && time < orders[customer_number]->get_due_date())
-//     {
-//       dist = orders[customer_number]->distance_to(i, orders);
-//       next_customer = i;
-//     }
-//   
-//   return next_customer;
-// }
 
 int Instance::nearest(int customer_number, int vehicle_capacity)
 {
@@ -159,15 +145,12 @@ float Instance::itinerary(vector<int> &route)
     
     time += orders[current_cust]->distance_to(next_cust, orders);
     if(time < orders[next_cust]->get_ready_time())
-    {
       time = orders[next_cust]->get_ready_time();
-//       start = time - orders[current_cust]->distance_to(next_cust, orders);
-    }
     time += orders[next_cust]->get_service_duration();
 
     
     vehicle_capacity -= orders[next_cust]->get_demand();
-    cout << "c1: " << current_cust << " c2: " << next_cust << " capa: " << vehicle_capacity << " time: " << time << "\n";
+//     cout << "c1: " << current_cust << " c2: " << next_cust << " capa: " << vehicle_capacity << " time: " << time << "\n";
     if(!next_cust)
       return time-start;
   }

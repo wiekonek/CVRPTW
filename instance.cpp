@@ -173,7 +173,7 @@ void Instance::solve()
       
     cost += check;
     iti_num++;
-    for(int i = 0; i < route.size(); i++)
+    for(int i = 0; i < route.size() - 1; i++)
       output << route[i] << " ";
     output << "\n";
     if(control++ >= served.size())
@@ -186,8 +186,6 @@ void Instance::solve()
   output.close();
   
 }
-
-
 
 
 //           ORDER

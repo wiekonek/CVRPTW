@@ -108,19 +108,6 @@ int Instance::nearest ( int customer_number, int vehicle_capacity ) {
     return next_customer;
 }
 
-int Instance::smallest_order()
-{
-  int smallest = pow(10, 5), demand;
-  
-  for(int i = 0; i < orders.size(); i++){
-    demand = orders[i]->get_demand();
-    if(!served[i] && demand < smallest)
-      smallest = demand;
-  }
-  
-  return smallest;
-}
-
 
 float Instance::itinerary(vector<int> &route)
 {
@@ -132,7 +119,7 @@ float Instance::itinerary(vector<int> &route)
   route.resize(0);
   route.push_back(0);
 
-  while(vehicle_capacity >= smallest_order())
+  while(true)
   {
     current_cust = next_cust;
     tmp_cust = nearest(current_cust, vehicle_capacity);

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <ctime>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -21,7 +22,14 @@ int main ( int argc, char **argv ) {
       nastpene  - nazwy plikow z instancjami problemu.\n\n";
       return 0;
     }
-        
+    
+    std::fstream tmp_file;
+    for(int i = 2; i < argc-2; i++) {
+      tmp_file.open(argv[i]);
+      if(!tmp_file.good())
+	return 0;
+    }
+    
     cout<<"\nDo pracy...\n";
         
     pid_t pID;

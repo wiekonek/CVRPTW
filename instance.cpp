@@ -20,7 +20,6 @@ Instance::Instance(char* file_name, int amount)
   this->file_name = file_name;
   fp.open(file_name);
 
-
   for(int i = 0; i < 4; i++)
     fp >> text;
 
@@ -173,7 +172,7 @@ void Instance::solve()
       
     cost += check;
     iti_num++;
-    for(int i = 0; i < route.size() - 1; i++)
+    for(int i = 1; i < route.size() - 1; i++)
       output << route[i] << " ";
     output << "\n";
     if(control++ >= served.size())

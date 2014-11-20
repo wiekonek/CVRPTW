@@ -93,28 +93,29 @@ bool Instance::all_served()
 
 
 
-int Instance::nearest(int customer_number, int vehicle_capacity)
-{
-  int next_customer = 0;
-  float dist = pow(10.0, 5.0);
+int Instance::nearest ( int customer_number, int vehicle_capacity ) {
+    int next_customer = 0;
+    float dist = pow ( 10.0, 5.0 ), current_dist;
 
-  for(int i = 1; i < orders.size(); i++)
-    if(!served[i]  && i != customer_number  && orders[customer_number]->distance_to(i, orders) < dist && time < orders[i]->get_due_date() && vehicle_capacity >= orders[i]->get_demand())
-    {
-      dist = orders[customer_number]->distance_to(i, orders);
-      next_customer = i;
+    for ( int i = 1; i < orders.size(); i++ ) {
+      current_dist = orders[customer_number]->distance_to ( i, orders );
+      if ( !served[i]  && i != customer_number  && vehicle_capacity >= orders[i]->get_demand() && current_dist < dist &&
+	time + current_dist + orders[i]->get_service_duration() <= orders[i]->get_due_date()) {
+	  dist = current_dist;
+	  next_customer = i;
+      }
     }
-  
-  return next_customer;
+    return next_customer;
 }
 
 int Instance::smallest_order()
 {
-  int smallest = pow(10, 5);
+  int smallest = pow(10, 5), demand;
   
   for(int i = 0; i < orders.size(); i++){
-    if(!served[i] && orders[i]->get_demand() < smallest)
-      smallest = orders[i]->get_demand();
+    demand = orders[i]->get_demand();
+    if(!served[i] && demand < smallest)
+      smallest = demand;
   }
   
   return smallest;
@@ -125,7 +126,7 @@ float Instance::itinerary(vector<int> &route)
 {
   time = 0;
   float start = 0;
-  int vehicle_capacity = Q, current_cust, next_cust = 0; 
+  int vehicle_capacity = Q, current_cust, next_cust = 0, tmp_cust, tmp_service_duration, deadline; 
   vector<bool> tmp = served;
   served[0] = 0;
   route.resize(0);
@@ -134,9 +135,12 @@ float Instance::itinerary(vector<int> &route)
   while(vehicle_capacity >= smallest_order())
   {
     current_cust = next_cust;
-    if(time + orders[nearest(current_cust, vehicle_capacity)]->distance_to(0, orders) + orders[current_cust]->get_service_duration() + orders[next_cust]->get_service_duration()<= orders[0]->get_due_date())
-      next_cust = nearest(current_cust, vehicle_capacity);
-    else if(time + orders[current_cust]->distance_to(0, orders) + orders[current_cust]->get_service_duration() <= orders[0]->get_due_date())
+    tmp_cust = nearest(current_cust, vehicle_capacity);
+    tmp_service_duration = orders[current_cust]->get_service_duration();
+    deadline = orders[0]->get_due_date();
+    if(time + orders[tmp_cust]->distance_to(0, orders) + tmp_service_duration + orders[next_cust]->get_service_duration()<= deadline)
+      next_cust = tmp_cust;
+    else if(time + orders[current_cust]->distance_to(0, orders) + tmp_service_duration <= deadline)
       next_cust = 0;
     else
       return -1;
@@ -172,6 +176,7 @@ void Instance::solve()
   while(!all_served())
   {
     check = itinerary(route);
+//     cout<<"\n";
     if(check == -1)
     {
       output.seekp(0);

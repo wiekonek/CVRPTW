@@ -52,13 +52,9 @@ Instance::Instance(char* file_name, int amount)
   }
   
   served.resize(orders.size());
-//   ready.resize(orders.size());
   
   for(int i = 0; i < served.size() - 1; i++)
-  {
     served[i] = false;
-//     ready[i] = false;
-  }
   
   fp.close();
 }
@@ -94,16 +90,17 @@ bool Instance::all_served()
 
 int Instance::nearest ( int customer_number, int vehicle_capacity ) {
     int next_customer = 0;
-    float dist = pow ( 10.0, 5.0 ), current_dist;
+    float dist = pow ( 10.0, 7.0 ), current_dist;
 
     for ( int i = 1; i < orders.size(); i++ ) {
       current_dist = orders[customer_number]->distance_to ( i, orders );
       if ( !served[i]  && i != customer_number  && vehicle_capacity >= orders[i]->get_demand() && current_dist < dist &&
-	time + current_dist + orders[i]->get_service_duration() <= orders[i]->get_due_date()) {
+	  time + current_dist <= orders[i]->get_due_date()) {
 	  dist = current_dist;
 	  next_customer = i;
       }
     }
+//     cout<<"nearest : "<<customer_number<< "\t"<<next_customer<<"\n";
     return next_customer;
 }
 
@@ -117,19 +114,23 @@ float Instance::itinerary(vector<int> &route)
   served[0] = 0;
   route.resize(0);
   route.push_back(0);
+  deadline = orders[0]->get_due_date();
 
   while(true)
   {
     current_cust = next_cust;
     tmp_cust = nearest(current_cust, vehicle_capacity);
-    tmp_service_duration = orders[current_cust]->get_service_duration();
-    deadline = orders[0]->get_due_date();
-    if(time + orders[tmp_cust]->distance_to(0, orders) + tmp_service_duration + orders[next_cust]->get_service_duration()<= deadline)
+    
+    
+    
+    
+    if(time + orders[tmp_cust]->distance_to(0, orders) /*+ orders[tmp_cust]->get_service_duration()*/<= deadline)
       next_cust = tmp_cust;
-    else if(time + orders[current_cust]->distance_to(0, orders) + tmp_service_duration <= deadline)
+    else if(time + orders[current_cust]->distance_to(0, orders) <= deadline)
       next_cust = 0;
     else
       return -1;
+    
     route.push_back(next_cust);
     served[next_cust] = true; 
     
@@ -165,8 +166,10 @@ void Instance::solve()
 //     cout<<"\n";
     if(check == -1)
     {
+      output.close();
+      output.open(("OUTPUT_"+file_name).c_str(), std::ios::out | std::ios::trunc);
       output.seekp(0);
-      output << -1;
+      output << -1 << "\n";
       return;
     }
       
@@ -176,9 +179,11 @@ void Instance::solve()
       output << route[i] << " ";
     output << "\n";
     if(control++ >= served.size())
-      return;
+      break;
   }
-
+//   for(int i = 0; i < served.size(); i++)
+//     cout<<served[i]<< " ";
+//   cout<<"\n";
   output.seekp(0);
   output << iti_num << " " << std::setiosflags(std::ios::fixed) << std::setprecision(5) << cost;
   

@@ -12,6 +12,7 @@
 
 using std::cout;
 using std::cin;
+using std::clock;
 
 int main ( int argc, char **argv ) {
 
@@ -26,27 +27,33 @@ int main ( int argc, char **argv ) {
     std::fstream tmp_file;
     for(int i = 2; i < argc-2; i++) {
       tmp_file.open(argv[i]);
-      if(!tmp_file.good())
+      if(!tmp_file.good()) {
+	cout<<"Bledne argument.\n";
 	return 0;
+      }
+      tmp_file.close();
     }
     
     cout<<"\nDo pracy...\n";
         
     pid_t pID;
+    time_t start;
     int status = -1;
     Text *amount = new Text ( argv[1] );
-    std::vector <Instance*> test(argc-2); 
+    std::vector <Instance*> test(argc-2);
+    
     for(int i = 2; i < argc; i++)
       test[i-2] = new Instance ( argv[i], amount->to_int() );
 
     pID = fork();
     if ( !pID )
       for(int i = 0; i < test.size(); i++) {
-	  test[i]->solve();
-	  cout<<"Zakonczono rozwiazywac instancje problemu z pliku: "<<argv[i+2]<<"\n";
-	}
+	start = clock();
+	test[i]->solve();
+	cout<<"Zakonczono rozwiazywac instancje problemu z pliku: "<<argv[i+2]<<" w czasie: "<<clock()-start<<"ms.\n";
+      }
     else {
-      while ( std::clock() <= MAX_TIME ) {
+      while ( clock() <= MAX_TIME ) {
 	if ( !wait ( &status ) )
 	break;
       };

@@ -90,13 +90,17 @@ bool Instance::all_served()
 
 int Instance::nearest ( int customer_number, int vehicle_capacity ) {
     int next_customer = 0;
-    float dist = pow ( 10.0, 7.0 ), current_dist;
+    float dist, current_dist, ready_time, time_gap, current_cost, cost = pow ( 10.0, 7.0 );
 
     for ( int i = 1; i < orders.size(); i++ ) {
+
       current_dist = orders[customer_number]->distance_to ( i, orders );
-      if ( !served[i]  && i != customer_number  && vehicle_capacity >= orders[i]->get_demand() && current_dist < dist &&
+      ready_time = orders[i]->get_ready_time();
+      time + current_dist < ready_time ? time_gap = ready_time - (time + current_dist) : time_gap = 1;
+      current_cost = current_dist + time_gap;
+      if ( !served[i]  && i != customer_number  && vehicle_capacity >= orders[i]->get_demand() && current_cost < cost &&
 	  time + current_dist <= orders[i]->get_due_date()) {
-	  dist = current_dist;
+	  cost = current_cost;
 	  next_customer = i;
       }
     }

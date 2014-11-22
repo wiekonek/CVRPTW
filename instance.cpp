@@ -74,8 +74,6 @@ void Instance::show()
   
   for(int i = 0; i < served.size(); i++)
     cout<< i << " : " << served[i] << "\n";
-  
-  
 }
 
 bool Instance::all_served()
@@ -86,6 +84,20 @@ bool Instance::all_served()
     return true;
 }
 
+bool Instance::is_ok()
+{
+  float distance;
+  int service, deadline = orders[0]->get_due_date();
+  for(int i = 0; i < orders.size(); i++) {
+    distance = orders[0]->distance_to(i, orders);
+    service = orders[i]->get_service_duration();
+    if( 2*distance + service > deadline )
+      return false;
+    if(orders[i]->get_ready_time() + service > deadline)
+      return false;
+  }
+  return true;
+}
 
 
 int Instance::nearest ( int customer_number, int vehicle_capacity ) {
@@ -93,101 +105,73 @@ int Instance::nearest ( int customer_number, int vehicle_capacity ) {
     float dist, current_dist, ready_time, time_gap, current_cost, cost = pow ( 10.0, 7.0 );
 
     for ( int i = 1; i < orders.size(); i++ ) {
-
       current_dist = orders[customer_number]->distance_to ( i, orders );
       ready_time = orders[i]->get_ready_time();
       time + current_dist < ready_time ? time_gap = ready_time - (time + current_dist) : time_gap = 1;
-      current_cost = current_dist + time_gap;
+      current_cost = current_dist +  3*time_gap;
+      
       if ( !served[i]  && i != customer_number  && vehicle_capacity >= orders[i]->get_demand() && current_cost < cost &&
 	  time + current_dist <= orders[i]->get_due_date()) {
 	  cost = current_cost;
 	  next_customer = i;
       }
     }
-//     cout<<"nearest : "<<customer_number<< "\t"<<next_customer<<"\n";
     return next_customer;
 }
 
 
 float Instance::itinerary(vector<int> &route)
 {
+  int vehicle_capacity = Q, current_cust, next_cust = 0;
+  
   time = 0;
-  float start = 0;
-  int vehicle_capacity = Q, current_cust, next_cust = 0, tmp_cust, tmp_service_duration, deadline; 
-  vector<bool> tmp = served;
   served[0] = 0;
+  
   route.resize(0);
   route.push_back(0);
-  deadline = orders[0]->get_due_date();
-
-  while(true)
+  
+  do
   {
     current_cust = next_cust;
-    tmp_cust = nearest(current_cust, vehicle_capacity);
-    
-    
-    
-    
-    if(time + orders[tmp_cust]->distance_to(0, orders) /*+ orders[tmp_cust]->get_service_duration()*/<= deadline)
-      next_cust = tmp_cust;
-    else if(time + orders[current_cust]->distance_to(0, orders) <= deadline)
-      next_cust = 0;
-    else
-      return -1;
-    
+    next_cust = nearest(current_cust, vehicle_capacity);
     route.push_back(next_cust);
-    served[next_cust] = true; 
     
+    served[next_cust] = true; 
     time += orders[current_cust]->distance_to(next_cust, orders);
     if(time < orders[next_cust]->get_ready_time())
       time = orders[next_cust]->get_ready_time();
     time += orders[next_cust]->get_service_duration();
-
-    
     vehicle_capacity -= orders[next_cust]->get_demand();
-//     cout << "c1: " << current_cust << " c2: " << next_cust << " capa: " << vehicle_capacity << " time: " << time << "\n";
-    if(!next_cust)
-      return time-start;
-  }
+    
+  } while(next_cust);
   
+  return time;
 }
 
 
 void Instance::solve()
 {
-  int control = 0;
   double cost = 0, check = 0;
   int iti_num = 0;
   vector<int> route;
   std::ofstream output;
-  output.open(("OUTPUT_"+file_name).c_str());
+  output.open(("OUTPUT_"+file_name).c_str(), std::ios::out | std::ios::trunc);
+  
+  if(!is_ok()) {
+    output << -1 << "\n";
+    return;
+  }
   
   output << "                                                  \n";
   
-  while(!all_served())
-  {
-    check = itinerary(route);
-//     cout<<"\n";
-    if(check == -1)
-    {
-      output.close();
-      output.open(("OUTPUT_"+file_name).c_str(), std::ios::out | std::ios::trunc);
-      output.seekp(0);
-      output << -1 << "\n";
-      return;
-    }
-      
-    cost += check;
+  do {
+    cost += itinerary(route);
     iti_num++;
     for(int i = 1; i < route.size() - 1; i++)
       output << route[i] << " ";
     output << "\n";
-    if(control++ >= served.size())
-      break;
-  }
-//   for(int i = 0; i < served.size(); i++)
-//     cout<<served[i]<< " ";
-//   cout<<"\n";
+    
+  } while(!all_served());
   output.seekp(0);
   output << iti_num << " " << std::setiosflags(std::ios::fixed) << std::setprecision(5) << cost;
   

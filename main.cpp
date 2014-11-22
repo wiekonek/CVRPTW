@@ -8,11 +8,10 @@
 #include "instance.h"
 #include "text.h"
 
-#define MAX_TIME 300000 //5 min
+#define MAX_TIME 300000000 //5 min
 
 using std::cout;
 using std::cin;
-using std::clock;
 
 int main ( int argc, char **argv ) {
 
@@ -28,13 +27,13 @@ int main ( int argc, char **argv ) {
     for(int i = 2; i < argc-2; i++) {
       tmp_file.open(argv[i]);
       if(!tmp_file.good()) {
-	cout<<"Bledne argument.\n";
+	cout<<"Niewlasciwe argumenty.\n";
 	return 0;
       }
       tmp_file.close();
     }
     
-    cout<<"\nDo pracy...\n";
+//     cout<<"\nPoprawne argumenty. Rozpoczynam...\n";
         
     pid_t pID;
     time_t start;
@@ -46,29 +45,27 @@ int main ( int argc, char **argv ) {
       test[i-2] = new Instance ( argv[i], amount->to_int() );
 
     pID = fork();
-    if ( !pID )
+    if ( pID ) {
       for(int i = 0; i < test.size(); i++) {
-	start = clock();
+	start = std::clock();
 	test[i]->solve();
-	cout<<"Zakonczono rozwiazywac instancje problemu z pliku: "<<argv[i+2]<<" w czasie: "<<clock()-start<<"ms.\n";
+// 	cout<<"Zakonczono rozwiazywac instancje z pliku: "<<argv[i+2]<<" w czasie: "<<std::clock()-start<<"ms.\n";
       }
-    else {
-      while ( clock() <= MAX_TIME ) {
-	if ( !wait ( &status ) )
-	break;
-      };
+    } else {  
+      while ( std::clock() <= MAX_TIME );
+    }
 
-      if ( !status )
-	cout<<"Koniec pracy! :)\nOpowiedzi znajduja sie w plikach ./OUTPUT_*.txt\n\n";
-      else {
-	cout<<"Przekroczono czas 5 min! :(\n\n";
-	kill ( pID, 9 );
-      }
+    if(!pID){
+      kill(getppid(), 9);
+//       cout<<"Przekroczono czas 5min!\n";
+    } else {
+      kill(pID, 9);
+    }
       
       for(int i = 0; i < test.size(); i++)
 	delete test[i];
       delete amount;
-    }
+//       cout<<"Koniec pracy. Zasoby zwolnione.\n\n";
 
 return 0;
 }

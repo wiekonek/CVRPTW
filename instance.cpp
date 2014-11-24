@@ -111,7 +111,7 @@ int Instance::nearest ( int customer_number, int vehicle_capacity ) {
       current_cost = current_dist +  3*time_gap;
       
       if ( !served[i]  && i != customer_number  && vehicle_capacity >= orders[i]->get_demand() && current_cost < cost &&
-	  time + current_dist <= orders[i]->get_due_date()) {
+	  time + current_dist <= (float)orders[i]->get_due_date()) {
 	  cost = current_cost;
 	  next_customer = i;
       }

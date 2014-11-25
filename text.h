@@ -14,4 +14,4 @@ public:
     
 };
 
-#endif // INSTANCE
+#endif // TEXT_H

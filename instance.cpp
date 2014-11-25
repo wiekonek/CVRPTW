@@ -5,7 +5,6 @@
 #include <fstream>
 #include <iomanip>
 
-
 using std::cout;
 using std::vector;
 
@@ -86,14 +85,14 @@ bool Instance::all_served()
 
 bool Instance::is_ok()
 {
-  float distance;
-  int service, deadline = orders[0]->get_due_date();
+  double distance;
+  double service, deadline = orders[0]->get_due_date();
   for(int i = 0; i < orders.size(); i++) {
     distance = orders[0]->distance_to(i, orders);
     service = orders[i]->get_service_duration();
     if( 2*distance + service > deadline )
       return false;
-    if(orders[i]->get_ready_time() + service > deadline)
+    if((double)orders[i]->get_ready_time() + service > deadline)
       return false;
   }
   return true;
@@ -102,16 +101,17 @@ bool Instance::is_ok()
 
 int Instance::nearest ( int customer_number, int vehicle_capacity ) {
     int next_customer = 0;
-    float dist, current_dist, ready_time, time_gap, current_cost, cost = pow ( 10.0, 7.0 );
-
+    double dist, current_dist, ready_time, time_gap, current_cost, cost = pow ( 10.0, 10.0 );
+    double deadline = orders[0]->get_due_date();
     for ( int i = 1; i < orders.size(); i++ ) {
       current_dist = orders[customer_number]->distance_to ( i, orders );
       ready_time = orders[i]->get_ready_time();
-      time + current_dist < ready_time ? time_gap = ready_time - (time + current_dist) : time_gap = 1;
-      current_cost = current_dist +  3*time_gap;
+      time + current_dist < ready_time ? time_gap = ready_time - (time + current_dist) : time_gap = 0;
+      current_cost = current_dist + time_gap;
       
       if ( !served[i]  && i != customer_number  && vehicle_capacity >= orders[i]->get_demand() && current_cost < cost &&
-	  time + current_dist <= (float)orders[i]->get_due_date()) {
+	  time + current_dist <= (double)orders[i]->get_due_date() &&
+	  time + current_cost + (double)orders[i]->get_service_duration() + (double)orders[i]->distance_to(0, orders) <= deadline) {
 	  cost = current_cost;
 	  next_customer = i;
       }
@@ -120,7 +120,7 @@ int Instance::nearest ( int customer_number, int vehicle_capacity ) {
 }
 
 
-float Instance::itinerary(vector<int> &route)
+double Instance::itinerary(vector<int> &route)
 {
   int vehicle_capacity = Q, current_cust, next_cust = 0;
   
@@ -213,11 +213,7 @@ int Instance::Order::get_service_duration() {
     return d;
 }
 
-float Instance::Order::distance_to(int next_customer, vector<Order*> list)
+double Instance::Order::distance_to(int next_customer, vector<Order*> list)
 {
-    return sqrt(pow(x-list[next_customer]->get_x() ,2)+pow(y-list[next_customer]->get_y() ,2));
+    return sqrt((x-list[next_customer]->get_x())*(x-list[next_customer]->get_x())+(y-list[next_customer]->get_y())*(y-list[next_customer]->get_y()));
 }
-
-
-
-

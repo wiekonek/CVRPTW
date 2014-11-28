@@ -24,7 +24,7 @@ int main ( int argc, char **argv ) {
     }
     
     std::fstream tmp_file;
-    for(int i = 2; i < argc-2; i++) {
+    for(int i = 2; i < argc; i++) {
       tmp_file.open(argv[i]);
       if(!tmp_file.good()) {
 	cout<<"Niewlasciwe argumenty.\n";

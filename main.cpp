@@ -46,6 +46,9 @@ int main ( int argc, char **argv ) {
 
     pID = fork();
     if ( pID ) {
+      
+      
+      
       for(int i = 0; i < test.size(); i++) {
 	start = std::clock();
 	test[i]->solve();
